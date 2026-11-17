@@ -1,0 +1,1 @@
+# coolcode-tool-template
