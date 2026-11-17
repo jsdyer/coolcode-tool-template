@@ -8,6 +8,8 @@ publication. No npm install is needed.
 
 Enable **Settings → General → Template repository** here. This repository does not
 need Pages enabled: its workflow builds/tests but intentionally skips deployment.
+New copies also skip deployment until `scripts/init.py` sets the tool ID to match
+their repository name. This lets you create the repo before configuring Pages.
 
 ## Start a new tool
 
@@ -20,7 +22,8 @@ need Pages enabled: its workflow builds/tests but intentionally skips deployment
 python3 scripts/init.py my-tool --title "My Tool" --description "Describe what this tool does."
 ```
 
-Review the category, tags, icon and mode in `tool.json`. `--owner` supports a different
+Review the category, tags and icon in `tool.json`. `access: "browser"` tells the main
+catalogue that the tool works immediately without installation. `--owner` supports a different
 GitHub owner, but only projects owned by `jsdyer` inherit the CoolCode domain.
 
 4. Replace the example in `web/` and its tests. Update the privacy explanation,
@@ -54,7 +57,7 @@ Playwright is a test-only dependency; the app and its static build do not use it
 
 ## Publish and register
 
-In the **new tool repository**, set **Settings → Pages → Build and deployment →
+When the actual tool is ready, in the **new tool repository** set **Settings → Pages → Build and deployment →
 Source → GitHub Actions**. Push to `main`, or manually run **Browser tool · Check and
 publish** after enabling Pages. If the initial deployment ran before Pages was enabled,
 enable it and rerun. PRs only check/build and provide a downloadable preview artifact.
@@ -67,6 +70,12 @@ After verifying the app, copy the reviewed object from `tool.json` into `data/to
 in [the main site](https://github.com/jsdyer/jsdyer.github.io). Each tool still builds
 independently. Update the hub record when listing metadata changes; the hub is the
 authority for discovery. Ordinary app updates touch only this repository.
+
+The main site separates **Use in your browser** from **Install yourself**. An app
+that asks for a file is still a browser tool. Standalone Linux packages should start
+in their own repositories with their own build/release workflow, rather than copying
+this browser-only scaffold. Their hub record uses `access: "install"`, links to an
+installation guide, and includes `requirements`.
 
 ## Files
 

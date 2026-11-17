@@ -22,4 +22,4 @@ tool = json.loads(path.read_text())
 tool.update(id=args.slug, title=args.title.strip(), description=args.description.strip(),
             url=f"/{args.slug}/", source=f"https://github.com/{args.owner}/{args.slug}")
 path.write_text(json.dumps(tool, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-print("Updated tool.json. Review category, tags, icon and mode; replace the example application.")
+print("Updated tool.json. Review category, tags and icon; replace the example application. Browser access is explicit.")

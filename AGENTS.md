@@ -4,6 +4,8 @@
   Never commit `dist/`. Do not add dependencies without a concrete application need.
 - Run `scripts/init.py` as documented in README, then replace the example UI,
   behaviour, tests and privacy text. Review all fields in `tool.json`.
+- Keep `access: "browser"` for the usable web tool. Selecting local files is not
+  installation. The hub renders its standard access label from this field.
 - Keep assets and imports relative so the app works at `/<repo>/`. Do not add a
   CNAME or claim the hub's domain. Link home to `https://coolcode.ca/`.
 - Keep transformations separate from DOM code. Render untrusted input through

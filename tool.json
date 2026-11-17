@@ -8,5 +8,5 @@
   "url": "/coolcode-tool-template/",
   "source": "https://github.com/jsdyer/coolcode-tool-template",
   "hosting": "project",
-  "mode": "Browser"
+  "access": "browser"
 }

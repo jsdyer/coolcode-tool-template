@@ -10,6 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    outputs:
+      publish: ${{ steps.identity.outputs.publish }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -26,6 +28,18 @@ jobs:
         run: python3 -m unittest discover -s tests -v
       - name: Build the static application
         run: python3 scripts/build.py
+      - name: Check whether the tool has been initialized
+        id: identity
+        env:
+          REPOSITORY_NAME: ${{ github.event.repository.name }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          tool_id = json.load(open('tool.json'))['id']
+          ready = tool_id != 'coolcode-tool-template' and tool_id == os.environ['REPOSITORY_NAME']
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f'publish={str(ready).lower()}\n')
+          PY
       - name: Install browser test dependencies
         run: |
           python3 -m pip install -r tests/browser-requirements.txt
@@ -47,12 +61,12 @@ jobs:
           include-hidden-files: true
           retention-days: 7
       - name: Package Pages site
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && github.event.repository.name != 'coolcode-tool-template'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && steps.identity.outputs.publish == 'true'
         uses: actions/upload-pages-artifact@v4
         with:
           path: dist
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && github.event.repository.name != 'coolcode-tool-template'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && needs.build.outputs.publish == 'true'
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10

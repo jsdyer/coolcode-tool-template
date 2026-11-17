@@ -37,6 +37,11 @@ class BuildTests(unittest.TestCase):
         self.edit(url="/different/")
         with self.assertRaises(ValueError): metadata(self.root)
 
+    def test_browser_access_is_explicit(self):
+        self.edit(access="install")
+        with self.assertRaisesRegex(ValueError, "immediately usable"):
+            metadata(self.root)
+
     def test_failed_build_keeps_existing_output(self):
         build(self.root)
         existing = (self.root / "dist/index.html").read_bytes()

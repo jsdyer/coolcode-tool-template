@@ -14,8 +14,8 @@ SLUG = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 
 def metadata(root=ROOT):
     tool = json.loads((root / "tool.json").read_text(encoding="utf-8"))
-    required = {"id", "title", "description", "category", "tags", "icon", "url", "source", "hosting"}
-    if not isinstance(tool, dict) or not required <= set(tool) <= required | {"mode"}:
+    required = {"id", "title", "description", "category", "tags", "icon", "url", "source", "hosting", "access"}
+    if not isinstance(tool, dict) or set(tool) != required:
         raise ValueError("tool.json has missing or unknown fields")
     for key in required - {"tags"}:
         if not isinstance(tool[key], str) or not tool[key].strip():
@@ -24,8 +24,8 @@ def metadata(root=ROOT):
         raise ValueError("Use a lowercase tool ID, matching /id/ URL and project hosting")
     if not isinstance(tool["tags"], list) or not all(isinstance(t, str) and t.strip() for t in tool["tags"]):
         raise ValueError("tags must be an array of nonempty strings")
-    if "mode" in tool and (not isinstance(tool["mode"], str) or not tool["mode"].strip()):
-        raise ValueError("mode must be nonempty when supplied")
+    if tool["access"] != "browser":
+        raise ValueError("This starter produces an immediately usable browser tool; use access: browser")
     source = urlsplit(tool["source"])
     if source.scheme != "https" or not source.hostname or source.username is not None or any(c.isspace() for c in tool["source"]) or "\\" in tool["source"]:
         raise ValueError("source must be an HTTPS URL without credentials or whitespace")
