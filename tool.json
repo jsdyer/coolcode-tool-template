@@ -8,5 +8,9 @@
   "url": "/coolcode-tool-template/",
   "source": "https://github.com/jsdyer/coolcode-tool-template",
   "hosting": "project",
-  "access": "browser"
+  "access": "browser",
+  "data_info": {
+    "mode": "local",
+    "detail": "The browser reads the text you paste and compares its lines."
+  }
 }

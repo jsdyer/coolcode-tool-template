@@ -4,6 +4,19 @@ A starting point for independent tools at `coolcode.ca/<repo>/`: a working local
 example, responsive UI, Python standard-library build, Node tests, PR checks and Pages
 publication. No npm install is needed.
 
+## Using the example
+
+<!-- coolcode:guide -->
+The first occurrence of each trimmed line keeps its place. Compare the output with the original text before copying the result.
+<!-- /coolcode:guide -->
+
+For a real tool, replace this paragraph with one or two plain-text sentences
+about an example, a limit or how to interpret the results. Keep the source,
+coverage, refresh behaviour and a worked example in this README as appropriate.
+When updating a tool, revise any details its behaviour has changed and keep the
+homepage's shorter data-source sentence in `tool.json` accurate.
+The hub imports the marked note into the catalogue README.
+
 ## One-time template setup
 
 Enable **Settings → General → Template repository** here. This repository does not

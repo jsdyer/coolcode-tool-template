@@ -21,3 +21,8 @@
 - PRs check/build; successful `main` builds deploy. The template repo skips deployment.
 - Once deployed, copy the reviewed `tool.json` record into `data/tools.json` in
   `jsdyer/jsdyer.github.io`. Don't register the starter itself as a finished tool.
+- For changes to inputs, coverage, date meanings or results, update the tool README
+  alongside the implementation. Its marked `coolcode:guide` excerpt supplies
+  the extra practical detail in the hub README. Only the short source sentence
+  belongs in the homepage record. Import the note with `scripts/sync_guides.py
+  --tool TOOL_ID` in the hub before regenerating its README.

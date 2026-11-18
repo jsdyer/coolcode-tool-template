@@ -14,10 +14,10 @@ SLUG = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 
 def metadata(root=ROOT):
     tool = json.loads((root / "tool.json").read_text(encoding="utf-8"))
-    required = {"id", "title", "description", "category", "tags", "icon", "url", "source", "hosting", "access"}
+    required = {"id", "title", "description", "category", "tags", "icon", "url", "source", "hosting", "access", "data_info"}
     if not isinstance(tool, dict) or set(tool) != required:
         raise ValueError("tool.json has missing or unknown fields")
-    for key in required - {"tags"}:
+    for key in required - {"tags", "data_info"}:
         if not isinstance(tool[key], str) or not tool[key].strip():
             raise ValueError(f"tool.json: {key} must be a nonempty string")
     if not SLUG.fullmatch(tool["id"]) or tool["url"] != f'/{tool["id"]}/' or tool["hosting"] != "project":
@@ -26,6 +26,14 @@ def metadata(root=ROOT):
         raise ValueError("tags must be an array of nonempty strings")
     if tool["access"] != "browser":
         raise ValueError("This starter produces an immediately usable browser tool; use access: browser")
+    info = tool["data_info"]
+    if (not isinstance(info, dict) or info.get("mode") not in ("snapshot", "live", "local", "reference", "mixed")
+            or not isinstance(info.get("detail"), str) or not info["detail"].strip()):
+        raise ValueError("Describe the tool's inputs for its homepage card in data_info")
+    guide = (root / "README.md").read_text(encoding="utf-8")
+    begin, end = "<!-- coolcode:guide -->", "<!-- /coolcode:guide -->"
+    if guide.count(begin) != 1 or guide.count(end) != 1 or not guide.partition(begin)[2].partition(end)[0].strip() or guide.index(begin) > guide.index(end):
+        raise ValueError("Include a practical README note between the coolcode:guide markers")
     source = urlsplit(tool["source"])
     if source.scheme != "https" or not source.hostname or source.username is not None or any(c.isspace() for c in tool["source"]) or "\\" in tool["source"]:
         raise ValueError("source must be an HTTPS URL without credentials or whitespace")
