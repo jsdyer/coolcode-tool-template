@@ -15,6 +15,7 @@ class BuildTests(unittest.TestCase):
         self.root = Path(self.temporary.name)
         shutil.copytree(ROOT / "web", self.root / "web")
         shutil.copyfile(ROOT / "tool.json", self.root / "tool.json")
+        shutil.copyfile(ROOT / "README.md", self.root / "README.md")
 
     def edit(self, **changes):
         tool = json.loads((self.root / "tool.json").read_text())
@@ -36,6 +37,14 @@ class BuildTests(unittest.TestCase):
     def test_url_matches_tool_id(self):
         self.edit(url="/different/")
         with self.assertRaises(ValueError): metadata(self.root)
+
+    def test_requires_a_source_sentence_and_a_guide_note(self):
+        (self.root / "README.md").write_text("# A tool")
+        with self.assertRaisesRegex(ValueError, "README note"):
+            metadata(self.root)
+        self.edit(data_info={"mode": "local", "detail": ""})
+        with self.assertRaisesRegex(ValueError, "homepage card"):
+            metadata(self.root)
 
     def test_browser_access_is_explicit(self):
         self.edit(access="install")
