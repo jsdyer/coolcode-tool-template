@@ -51,8 +51,7 @@ python3 -m http.server 8000 --directory dist
 ```
 
 Open `http://localhost:8000/`. The example trims lines, skips blanks and removes exact
-duplicates, preserving first-seen order and capitalization. It makes no API requests
-and does not persist text. Update that explanation if your app behaves differently.
+duplicates, preserving first-seen order and capitalization. It processes the text in tab memory. Update that explanation if your app behaves differently.
 
 CI also tests the browser flow and mobile layout at a project subpath. Replace the
 sample assertions in `tests/browser_smoke.py` when implementing your own UI. To run
@@ -75,7 +74,9 @@ Source → GitHub Actions**. Push to `main`, or manually run **Browser tool · C
 publish** after enabling Pages. If the initial deployment ran before Pages was enabled,
 enable it and rerun. PRs only check/build and provide a downloadable preview artifact.
 
-Keep asset paths and module imports relative. Check `https://coolcode.ca/my-tool/`.
+Keep `{{VISIT_COUNTER}}` in the page head and `{{ISSUE_LINK}}` in the footer when replacing the starter UI. The build enables these for initialized CoolCode repositories. The shared counter records aggregate opens on coolcode.ca by public tool ID. Toolbox inputs and URL parameters are excluded. The issue link opens a reporting form with the tool already selected.
+
+Keep app-owned asset paths and module imports relative. Check `https://coolcode.ca/my-tool/`.
 Do not add a CNAME or set `coolcode.ca` as this project's custom domain; the account
 site supplies it. Only successful `main` builds deploy.
 

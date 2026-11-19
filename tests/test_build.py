@@ -34,6 +34,20 @@ class BuildTests(unittest.TestCase):
         self.assertFalse((self.root / "dist/private.txt").exists())
         self.assertTrue((self.root / "dist/.nojekyll").exists())
 
+    def test_reporting_is_scoped_to_initialized_coolcode_tools(self):
+        for owner, slug, enabled in [
+            ("jsdyer", "coolcode-tool-template", False),
+            ("another-owner", "my-tool", False),
+            ("jsdyer", "my-tool", True),
+        ]:
+            with self.subTest(owner=owner, slug=slug):
+                self.edit(id=slug, url=f"/{slug}/", source=f"https://github.com/{owner}/{slug}")
+                build(self.root)
+                page = (self.root / "dist/index.html").read_text()
+                self.assertEqual('/assets/tool-metrics.js' in page, enabled)
+                self.assertEqual(f'https://coolcode.ca/report/?tool={slug}' in page, enabled)
+                self.assertNotIn("{{", page)
+
     def test_url_matches_tool_id(self):
         self.edit(url="/different/")
         with self.assertRaises(ValueError): metadata(self.root)

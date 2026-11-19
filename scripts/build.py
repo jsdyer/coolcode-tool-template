@@ -58,6 +58,19 @@ def build(root=ROOT):
             if placeholder not in page:
                 raise ValueError(f"Missing template placeholder: {placeholder}")
             page = page.replace(placeholder, escape(tool[key], quote=True))
+        slug = tool["id"]
+        on_coolcode = (
+            slug != "coolcode-tool-template"
+            and tool["source"].rstrip("/") == f"https://github.com/jsdyer/{slug}"
+        )
+        reporting = {
+            "{{VISIT_COUNTER}}": '<script defer src="/assets/tool-metrics.js" referrerpolicy="no-referrer"></script>',
+            "{{ISSUE_LINK}}": f'<a href="https://coolcode.ca/report/?tool={slug}" referrerpolicy="no-referrer">Report an issue</a>',
+        }
+        for placeholder, markup in reporting.items():
+            if placeholder not in page:
+                raise ValueError(f"Missing template placeholder: {placeholder}")
+            page = page.replace(placeholder, markup if on_coolcode else "")
         if re.search(r"\{\{[A-Z_]+\}\}", page):
             raise ValueError("Unresolved template placeholder in web/index.html")
         index.write_text(page, encoding="utf-8")
