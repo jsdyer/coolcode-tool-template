@@ -4,6 +4,13 @@
   Never commit `dist/`. Do not add dependencies without a concrete application need.
 - Run `scripts/init.py` as documented in README, then replace the example UI,
   behaviour, tests and privacy text. Review all fields in `tool.json`.
+- Build for expandable personal use: keep watchlists, preset queries, source
+  selections and tunable limits in a documented configuration file. Defaults are
+  starting points; accept arbitrary valid visitor input when the source permits it.
+  Derive counts, filters and validation from actual data, never a starter list's
+  length. Test adding an item beyond the defaults. Preserve earlier captures with
+  different coverage and clearly show the selected capture date. The README must
+  explain the exact edit, refresh and publication steps under Expand or customize.
 - Keep `access: "browser"` for the usable web tool. Selecting local files is not
   installation. The hub renders its standard access label from this field.
 - Keep assets and imports relative so the app works at `/<repo>/`. Do not add a

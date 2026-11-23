@@ -67,6 +67,24 @@ python3 tests/browser_smoke.py
 
 Playwright is a test-only dependency; the app and its static build do not use it.
 
+## Expand or customize
+
+Every implemented tool should replace this section with its actual configuration
+path and a working example. A small `config.json` can hold default entities,
+query presets, source choices and request limits. Those defaults should be useful
+starting points, while visitors can enter other valid inputs whenever the source
+supports them. Keep provider limits explicit and separate from the starter list.
+
+Derive counts, filters and item validation from the current data. Do not require
+exactly the initial number of items. Add a test that expands the configuration,
+and keep historical captures readable when their coverage differs from today's
+watchlist. Display the selected capture date accurately.
+
+Document which changes need only a normal code push and which also need a data
+refresh. Include the refresh command or exact GitHub workflow and input, followed
+by the publication step. A successful code build need not mean a new collection
+has been fetched. The starter itself has no external collection or refresh.
+
 ## Publish and register
 
 When the actual tool is ready, in the **new tool repository** set **Settings → Pages → Build and deployment →
