@@ -100,8 +100,8 @@ site supplies it. Only successful `main` builds deploy.
 
 After verifying the app, copy the reviewed object from `tool.json` into `data/tools.json`
 in [the main site](https://github.com/jsdyer/jsdyer.github.io). Each tool still builds
-independently. Update the hub record when listing metadata changes; the hub is the
-authority for discovery. Ordinary app updates touch only this repository.
+independently. The hub generates the visitor Worker ID list, watchdog targets and sitemap; deploy and verify the affected services before considering the release complete. Update the hub record when listing metadata changes; the hub is the
+authority for discovery. Every change must follow the [mandatory lifecycle](https://github.com/jsdyer/jsdyer.github.io/blob/main/docs/tool-lifecycle.md). App-only changes may leave integrations unchanged, but this must be checked; documentation, source fields, schedules and registration changes also require the hub update.
 
 The main site separates **Use in your browser** from **Install yourself**. An app
 that asks for a file is still a browser tool. Standalone Linux packages should start

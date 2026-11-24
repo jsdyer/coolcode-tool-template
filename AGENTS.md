@@ -38,3 +38,9 @@
   the extra practical detail in the hub README. Only the short source sentence
   belongs in the homepage record. Import the note with `scripts/sync_guides.py
   --tool TOOL_ID` in the hub before regenerating its README.
+
+- For EVERY addition, update, rename or removal, follow the mandatory lifecycle at
+  https://github.com/jsdyer/jsdyer.github.io/blob/main/docs/tool-lifecycle.md.
+  Consider all affected catalogue/README notes, audit coverage, generated Worker and
+  deployment receipt, watchdog targets/probes/App permissions, guard and sitemap.
+  Do not report a release complete with these integrations left implicit.
