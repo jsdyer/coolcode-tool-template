@@ -44,3 +44,8 @@
   Consider all affected catalogue/README notes, audit coverage, generated Worker and
   deployment receipt, watchdog targets/probes/App permissions, guard and sitemap.
   Do not report a release complete with these integrations left implicit.
+
+- Give the page a concise task-based search title using `init.py --search-title`; keep
+  the application name on the page. Retain the build-time search metadata helper,
+  choose an accurate app category, and derive any Dataset metadata from real inputs.
+  Never substitute a build timestamp for a source edition or fabricate ratings.

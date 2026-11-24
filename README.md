@@ -155,3 +155,25 @@ The starter has no scheduled collector and therefore ships no recurring guard jo
 Templates don't propagate future edits automatically. Adopt fixes explicitly and
 consider a versioned reusable workflow once several tools confirm the shared process.
 Choose and add the intended software license before distributing a new project.
+
+## Search metadata
+
+Initialize the page title with a concise task phrase, while keeping the creative
+app name in `--title`:
+
+```sh
+python3 scripts/init.py line-cleaner --title "Line Cleaner" --description "Trim lines and remove exact duplicates in your browser." --search-title "Trim Lines & Remove Duplicates"
+```
+
+The build adds static `WebApplication` JSON-LD, a free CAD offer and social metadata.
+For initialized jsdyer tools it also adds the canonical CoolCode URL. Forks and the
+uninitialized template do not claim a CoolCode canonical. Review the application
+category in `scripts/build.py` when adapting the tool; the starter is a utility.
+Do not invent ratings or reviews. Search markup does not guarantee a rich result.
+
+For a saved public dataset, pass Dataset objects to `add_search_metadata` from the
+app builder, with actual source attribution, licence, coverage and download URLs.
+Derive counts and dates from the same snapshot used by the app and show those details
+on the page. Keep source edition, retrieval and page-build time distinct. Omit an
+unknown source modification date instead of setting it to the current build time.
+Read the hub's `docs/search-discovery.md` for the release checklist.
