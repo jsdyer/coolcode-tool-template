@@ -117,6 +117,7 @@ installation guide, and includes `requirements`.
 | `web/` | HTML, responsive CSS, DOM interactions and separate model logic |
 | `scripts/build.py` | Escape metadata and build `web/` into `dist/` |
 | `scripts/init.py` | Set a new project's identity |
+| `scripts/add_schedule_guard.py` | Add an opt-in guard for explicitly selected scheduled collectors |
 | `tests/` | Application and builder tests |
 | `.github/workflows/pages.yml` | Check PRs and publish successful main builds |
 | `AGENTS.md` | Instructions for future coding work |
@@ -128,6 +129,28 @@ and send only the information needed for the selected action. Never embed secret
 Scheduled refresh is opt-in. Validate source data before deploying, display its date,
 and preserve the last good deployment on failure. Public-repository schedules can
 stop after 60 days without repository activity.
+
+When adding a collector with `on.schedule`, also keep `workflow_dispatch` available
+for the independent Linux server scheduler. Generate a separate schedule guard,
+listing every scheduled collector in the repository:
+
+```sh
+python3 scripts/add_schedule_guard.py --repository jsdyer/my-tool .github/workflows/pages.yml
+```
+
+Replace the repository and workflow paths with the real values. Review the generated
+allowlist, commit `.github/workflows/schedule-guard.yml`, and verify its first push
+run. Re-run the command with the complete list when adding, renaming or removing a
+collector. The guard runs weekly, independently of collector failures, and calls
+GitHub's enable-workflow API for those paths and itself. It restores workflows
+disabled for inactivity and preserves manually disabled workflows. It does not
+fetch data, create dummy commits or change source/check timestamps.
+
+This is an interim mitigation: GitHub does not document active-workflow renewal as
+a permanent exemption, and scheduled runs can be delayed or dropped. Register the
+collector and its freshness expectations in the independent server scheduler too.
+Document its real data check, collection and publication steps in the tool README.
+The starter has no scheduled collector and therefore ships no recurring guard job.
 
 Templates don't propagate future edits automatically. Adopt fixes explicitly and
 consider a versioned reusable workflow once several tools confirm the shared process.

@@ -25,6 +25,11 @@
   Chromium; `tests/browser-requirements.txt` contains the test-only dependency.
 - The default build is offline. Add data refresh only when needed, with validation
   and visible source/build dates. Failed refreshes must not replace good deployments.
+- When adding scheduled collection, retain workflow_dispatch and generate the
+  separate allowlisted guard with scripts/add_schedule_guard.py as documented.
+  Include every scheduled collector; update the list on workflow renames/removals.
+  Register the collector and freshness expectations with the independent Linux
+  scheduler. The guard is an interim mitigation, not proof that data is fresh.
 - PRs check/build; successful `main` builds deploy. The template repo skips deployment.
 - Once deployed, copy the reviewed `tool.json` record into `data/tools.json` in
   `jsdyer/jsdyer.github.io`. Don't register the starter itself as a finished tool.
