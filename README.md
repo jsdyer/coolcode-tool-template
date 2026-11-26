@@ -7,7 +7,7 @@ publication. No npm install is needed.
 ## Using the example
 
 <!-- coolcode:guide -->
-The first occurrence of each trimmed line keeps its place. Compare the output with the original text before copying the result.
+The page opens with four city names and three cleaned lines. Edit the repeated Halifax entry to see the result change, or replace the example with your own list.
 <!-- /coolcode:guide -->
 
 For a real tool, replace this paragraph with one or two plain-text sentences
@@ -39,8 +39,13 @@ Review the category, tags and icon in `tool.json`. `access: "browser"` tells the
 catalogue that the tool works immediately without installation. `--owner` supports a different
 GitHub owner, but only projects owned by `jsdyer` inherit the CoolCode domain.
 
-4. Replace the example in `web/` and its tests. Update the privacy explanation,
-   source attribution and README to describe the real tool.
+4. Replace the example in `web/` and its tests. Open the real tool at a phone width. Can a
+   first-time visitor tell what is shown and try the main action? On a map, put the
+   selected place, meaning of the markers and observation date beside the map. On a
+   calculator, a labelled editable example can show the inputs and their result together.
+   If the tool needs the visitor’s own file or a live lookup, identify the input and what
+   they will get before asking for it. Update the privacy explanation, source attribution
+   and README for the finished tool.
 5. Test and preview:
 
 ```sh

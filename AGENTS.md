@@ -15,6 +15,10 @@
   installation. The hub renders its standard access label from this field.
 - Keep assets and imports relative so the app works at `/<repo>/`. Do not add a
   CNAME or claim the hub's domain. Link home to `https://coolcode.ca/`.
+- Design the first screen around the visitor’s task. Put a short action beside the working
+  control. For a map or chart, identify the subject, units or legend and observation period
+  where the visitor sees the data. Prefer a labelled, changeable example when it helps.
+  Exercise the first visit and one useful interaction at a phone width.
 - Keep transformations separate from DOM code. Render untrusted input through
   textContent/value, not innerHTML. Never embed API secrets.
 - State which inputs leave the browser. Do not retain pasted text or uploads by

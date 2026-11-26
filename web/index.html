@@ -13,18 +13,22 @@
   <a class="skip" href="#main">Skip to content</a>
   <header><a href="https://coolcode.ca/">← CoolCode.ca</a><a href="{{SOURCE_URL}}">Source &amp; instructions ↗</a></header>
   <main id="main">
-    <p class="eyebrow">Browser tool starter</p>
     <h1>{{TITLE}}</h1>
     <p class="intro">{{DESCRIPTION}}</p>
     <section aria-labelledby="example-title">
-      <h2 id="example-title">Clean a list</h2>
-      <p>Trim spaces, skip blank lines and remove exact duplicates. Capitalization stays distinct.</p>
+      <h2 id="example-title">Remove duplicate lines</h2>
+      <p>Edit the city names or paste your own list, one item per line. The first copy of each line keeps its place.</p>
+      <p id="status" role="status" aria-live="polite">3 unique lines. 1 duplicate removed.</p>
       <div class="panels">
-        <div><label for="input">Your lines</label><textarea id="input" rows="10" maxlength="100000" spellcheck="false" placeholder="Paste one item per line"></textarea></div>
-        <div><label for="output">Cleaned lines</label><textarea id="output" rows="10" readonly spellcheck="false"></textarea></div>
+        <div><label for="input">Original lines</label><textarea id="input" rows="5" maxlength="100000" spellcheck="false" placeholder="Paste one item per line">Halifax
+Langley
+Halifax
+Vancouver</textarea></div>
+        <div><label for="output">Cleaned lines</label><textarea id="output" rows="5" readonly spellcheck="false">Halifax
+Langley
+Vancouver</textarea></div>
       </div>
-      <div class="actions"><button id="sample" type="button">Load example</button><button id="clear" type="button">Clear</button><button id="copy" type="button" hidden>Copy result</button></div>
-      <p id="status" role="status" aria-live="polite">Paste a list to begin.</p>
+      <div class="actions"><button id="sample" type="button">Restore example</button><button id="clear" type="button">Clear</button><button id="copy" type="button" hidden>Copy result</button></div>
       <noscript><p>This tool needs JavaScript to process your text. The source is available above.</p></noscript>
     </section>
     <!-- common-use-links -->

@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+import re
 import shutil
 import sys
 import tempfile
@@ -53,8 +54,9 @@ class BuildTests(unittest.TestCase):
         build(self.root)
         route = self.root / "dist/remove-duplicate-cities/index.html"
         self.assertFalse(route.exists())
-        (self.root / "web/index.html").write_text(
-            (self.root / "web/index.html").read_text().replace("<title>{{TITLE}}", "<title>Custom search title"))
+        entry = self.root / "web/index.html"
+        entry.write_text(re.sub(r"<title>.*?</title>", "<title>Custom search title · CoolCode</title>",
+                                entry.read_text(), count=1, flags=re.S))
         shutil.copytree(ROOT / "examples/common-pages", self.root / "common-pages")
         build(self.root)
         root = (self.root / "dist/index.html").read_text()

@@ -39,7 +39,7 @@ def main():
                 errors = []
                 page.on("pageerror", lambda error: errors.append(str(error)))
                 page.goto(f"http://127.0.0.1:{server.server_port}/example-tool/")
-                page.locator("#sample").click()
+                assert page.locator("#input").input_value() == "Halifax\nLangley\nHalifax\nVancouver"
                 assert page.locator("#output").input_value() == "Halifax\nLangley\nVancouver"
                 assert "1 duplicate removed" in page.locator("#status").inner_text()
                 page.locator("#input").fill('<img src=x onerror="alert(1)">\n<img src=x onerror="alert(1)">')
@@ -47,15 +47,22 @@ def main():
                 assert page.locator("img").count() == 0
                 page.locator("#clear").click()
                 assert page.locator("#output").input_value() == ""
+                assert "Paste one item per line" in page.locator("#status").inner_text()
                 page.locator("#sample").click()
+                assert page.locator("#output").input_value() == "Halifax\nLangley\nVancouver"
                 page.screenshot(path=str(screenshots / "desktop.png"), full_page=True)
                 page.set_viewport_size({"width": 390, "height": 844})
+                page.goto(f"http://127.0.0.1:{server.server_port}/example-tool/")
+                assert page.locator("#input").bounding_box()["y"] < 844
+                assert page.locator("#output").input_value() == "Halifax\nLangley\nVancouver"
                 assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
                 page.screenshot(path=str(screenshots / "mobile.png"), full_page=True)
                 page.goto(f"http://127.0.0.1:{server.server_port}/preset-fixture/dist/remove-duplicate-cities/")
                 assert page.locator("#output").input_value() == "Vancouver\nHalifax\nCharlottetown"
                 page.locator("#input").fill("Surrey\nSurrey\nOttawa")
                 assert page.locator("#output").input_value() == "Surrey\nOttawa"
+                page.get_by_role("button", name="Restore example").click()
+                assert page.locator("#output").input_value() == "Vancouver\nHalifax\nCharlottetown"
                 assert not errors, errors
                 browser.close()
             print("Browser checks passed: project subpath, sample, clear, safe text and mobile layout")

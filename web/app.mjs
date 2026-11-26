@@ -6,12 +6,14 @@ const copy = document.querySelector('#copy');
 function update() {
   const result = cleanLines(input.value);
   output.value = result.text;
-  status.textContent = `${result.count} unique ${result.count === 1 ? 'line' : 'lines'}; ${result.removed} ${result.removed === 1 ? 'duplicate' : 'duplicates'} removed.`;
+  status.textContent = result.count
+    ? `${result.count} unique ${result.count === 1 ? 'line' : 'lines'}. ${result.removed} ${result.removed === 1 ? 'duplicate' : 'duplicates'} removed.`
+    : 'Paste one item per line or restore the example.';
   copy.disabled = result.count === 0;
 }
 input.addEventListener('input', update);
 document.querySelector('#sample').addEventListener('click', () => {
-  input.value = '  Halifax\nLangley\nHalifax\n\nVancouver  ';
+  input.value = input.defaultValue;
   update();
 });
 document.querySelector('#clear').addEventListener('click', () => {
