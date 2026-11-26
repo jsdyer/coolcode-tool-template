@@ -33,5 +33,6 @@ if (navigator.clipboard && window.isSecureContext) {
     }
   });
 }
+if (input.value) update();
 // Namespace future preference storage as coolcode:<tool-id>:<key>.
 // Do not persist pasted text or uploads by default.

@@ -177,3 +177,24 @@ Derive counts and dates from the same snapshot used by the app and show those de
 on the page. Keep source edition, retrieval and page-build time distinct. Omit an
 unknown source modification date instead of setting it to the current build time.
 Read the hub's `docs/search-discovery.md` for the release checklist.
+
+## Publish a preconfigured common-use page
+
+Choose a task that works on arrival. Give it its own HTML title, heading, short description, and a starting result a visitor can change. The starter can build reviewed pages from a repository-level `common-pages/` directory. The optional example under `examples/` cleans a duplicate city list and shows the original and cleaned values in its first HTML response.
+
+To preview the example with the starter application:
+
+```sh
+cp -r examples/common-pages common-pages
+python3 scripts/build.py
+python3 -m http.server 8000 --directory dist
+```
+
+Open `http://localhost:8000/remove-duplicate-cities/` and edit the list. New tools can use their own calculator, filters and source data in place of this example. For each published page:
+
+1. Add its directory slug, task title and description to `common-pages/manifest.json` and its HTML to `common-pages/<slug>.html`. The builder accepts one lowercase slug per page.
+2. Reference shared assets through `{{ASSET_PREFIX}}` in that HTML, retain the root tool ID and reporting placeholders, and use relative links within the tool. The builder generates that page's canonical and social metadata. The primary landing page keeps its existing search title. The root page's `<!-- common-use-links -->` marker renders links to the configured pages.
+3. Test the working preset from its actual directory. Check its static result, editable inputs, canonical, assets and stats ID. A tool that generates its own pages can perform these same checks in its custom builder.
+4. Add a matching entry to the existing tool's hub record in `data/tools.json`, for example `"use_cases": [{"title": "Remove duplicate cities from a list", "path": "remove-duplicate-cities/"}]`. Push the working app, verify the public URL, then publish its catalogue and sitemap entry.
+
+The default build publishes only the main tool. Publishing an example requires explicitly copying or authoring its definitions. Keep personal inputs and transient combinations out of common-use URLs.

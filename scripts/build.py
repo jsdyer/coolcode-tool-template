@@ -42,6 +42,54 @@ def metadata(root=ROOT):
     return tool
 
 
+def read_common_pages(root):
+    directory = root / "common-pages"
+    path = directory / "manifest.json"
+    if not path.exists():
+        return []
+    if directory.is_symlink() or path.is_symlink():
+        raise ValueError("Common-use definitions must not be symlinks")
+    entries = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(entries, list):
+        raise ValueError("Expected a list of common-use pages")
+    seen = set()
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != {"slug", "title", "description"}:
+            raise ValueError("Each common-use page needs a slug, title and description")
+        if not all(isinstance(v, str) and v.strip() for v in entry.values()):
+            raise ValueError("Empty or invalid common-use page field")
+        slug = entry["slug"]
+        if not SLUG.fullmatch(slug) or slug in seen:
+            raise ValueError("Common-use slugs must be safe, unique directory names")
+        seen.add(slug)
+    return entries
+
+
+def render_page(page, tool, asset_prefix):
+    page = page.replace("{{ASSET_PREFIX}}", asset_prefix)
+    for token, key in {"TITLE": "title", "DESCRIPTION": "description", "TOOL_ID": "id", "SOURCE_URL": "source"}.items():
+        placeholder = "{{" + token + "}}"
+        if placeholder not in page:
+            raise ValueError(f"Missing template placeholder: {placeholder}")
+        page = page.replace(placeholder, escape(tool[key], quote=True))
+    slug = tool["id"]
+    on_coolcode = (
+        slug != "coolcode-tool-template"
+        and tool["source"].rstrip("/") == f"https://github.com/jsdyer/{slug}"
+    )
+    reporting = {
+        "{{VISIT_COUNTER}}": '<script defer src="/assets/tool-metrics.js" referrerpolicy="no-referrer"></script>',
+        "{{ISSUE_LINK}}": f'<a href="https://coolcode.ca/report/?tool={slug}" referrerpolicy="no-referrer">Report an issue</a>',
+    }
+    for placeholder, markup in reporting.items():
+        if placeholder not in page:
+            raise ValueError(f"Missing template placeholder: {placeholder}")
+        page = page.replace(placeholder, markup if on_coolcode else "")
+    if re.search(r"\{\{[A-Z_]+\}\}", page):
+        raise ValueError("Unresolved template placeholder in web/index.html")
+    return add_search_metadata(page, tool)
+
+
 def build(root=ROOT):
     tool = metadata(root)
     output = root / "dist"
@@ -55,28 +103,25 @@ def build(root=ROOT):
         shutil.copytree(web, stage)
         index = stage / "index.html"
         page = index.read_text(encoding="utf-8")
-        for token, key in {"TITLE": "title", "DESCRIPTION": "description", "TOOL_ID": "id", "SOURCE_URL": "source"}.items():
-            placeholder = "{{" + token + "}}"
-            if placeholder not in page:
-                raise ValueError(f"Missing template placeholder: {placeholder}")
-            page = page.replace(placeholder, escape(tool[key], quote=True))
-        slug = tool["id"]
-        on_coolcode = (
-            slug != "coolcode-tool-template"
-            and tool["source"].rstrip("/") == f"https://github.com/jsdyer/{slug}"
-        )
-        reporting = {
-            "{{VISIT_COUNTER}}": '<script defer src="/assets/tool-metrics.js" referrerpolicy="no-referrer"></script>',
-            "{{ISSUE_LINK}}": f'<a href="https://coolcode.ca/report/?tool={slug}" referrerpolicy="no-referrer">Report an issue</a>',
-        }
-        for placeholder, markup in reporting.items():
-            if placeholder not in page:
-                raise ValueError(f"Missing template placeholder: {placeholder}")
-            page = page.replace(placeholder, markup if on_coolcode else "")
-        if re.search(r"\{\{[A-Z_]+\}\}", page):
-            raise ValueError("Unresolved template placeholder in web/index.html")
-        page = add_search_metadata(page, tool)
-        index.write_text(page, encoding="utf-8")
+        common = read_common_pages(root)
+        links = ' · '.join(f'<a href="./{entry["slug"]}/">{escape(entry["title"])}</a>' for entry in common)
+        marker = "<!-- common-use-links -->"
+        if common and marker not in page:
+            raise ValueError("Add the common-use-links marker to the main page")
+        page = page.replace(marker, f'<nav aria-label="Common uses">{links}</nav>' if common else "")
+        index.write_text(render_page(page, tool, "./"), encoding="utf-8")
+        for entry in common:
+            directory = stage / entry["slug"]
+            if directory.exists():
+                raise ValueError(f"Common-use route collides with web content: {entry['slug']}")
+            directory.mkdir()
+            definition = root / "common-pages" / (entry["slug"] + ".html")
+            if definition.is_symlink():
+                raise ValueError("Common-use HTML must not be a symlink")
+            preset = dict(tool, title=entry["title"], description=entry["description"],
+                          url=f'{tool["url"]}{entry["slug"]}/')
+            body = render_page(definition.read_text(encoding="utf-8"), preset, "../")
+            (directory / "index.html").write_text(body, encoding="utf-8")
         (stage / ".nojekyll").touch()
         if output.exists():
             shutil.rmtree(output)

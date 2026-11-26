@@ -48,6 +48,41 @@ class BuildTests(unittest.TestCase):
                 self.assertEqual(f'https://coolcode.ca/report/?tool={slug}' in page, enabled)
                 self.assertNotIn("{{", page)
 
+    def test_common_pages_are_opt_in_and_preserve_root_search_title_and_stats(self):
+        self.edit(id="example", url="/example/", source="https://github.com/jsdyer/example")
+        build(self.root)
+        route = self.root / "dist/remove-duplicate-cities/index.html"
+        self.assertFalse(route.exists())
+        (self.root / "web/index.html").write_text(
+            (self.root / "web/index.html").read_text().replace("<title>{{TITLE}}", "<title>Custom search title"))
+        shutil.copytree(ROOT / "examples/common-pages", self.root / "common-pages")
+        build(self.root)
+        root = (self.root / "dist/index.html").read_text()
+        self.assertIn("<title>Custom search title · CoolCode</title>", root)
+        self.assertIn('href="./remove-duplicate-cities/"', root)
+        self.assertIn('rel="canonical" href="https://coolcode.ca/example/"', root)
+        page = route.read_text()
+        self.assertIn("<title>Remove duplicate cities from a list · CoolCode</title>", page)
+        self.assertIn('rel="canonical" href="https://coolcode.ca/example/remove-duplicate-cities/"', page)
+        self.assertIn('src="../app.mjs"', page)
+        self.assertIn('data-tool-id="example"', page)
+        self.assertIn('src="/assets/tool-metrics.js"', page)
+        self.assertIn("Vancouver\nHalifax\nCharlottetown</textarea>", page)
+
+    def test_rejects_invalid_common_page_paths_and_collisions(self):
+        directory = self.root / "common-pages"
+        directory.mkdir()
+        manifest = directory / "manifest.json"
+        for slug in ("../escape", "/absolute", "a/b", "x?name=1", ""):
+            with self.subTest(slug=slug):
+                manifest.write_text(json.dumps([{"slug": slug, "title": "T", "description": "D"}]))
+                with self.assertRaises(ValueError):
+                    build(self.root)
+        manifest.write_text('[{"slug":"data","title":"Data","description":"Some data"}]')
+        (self.root / "web/data").mkdir()
+        with self.assertRaisesRegex(ValueError, "collides"):
+            build(self.root)
+
     def test_url_matches_tool_id(self):
         self.edit(url="/different/")
         with self.assertRaises(ValueError): metadata(self.root)
